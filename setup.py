@@ -29,7 +29,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Security',
         'Topic :: System :: Networking :: Monitoring',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3.5',
         'Operating System :: POSIX',
         'Framework :: Flask',
