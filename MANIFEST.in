@@ -1,0 +1,3 @@
+include *.md
+recursive-include ampt_manager/web *
+recursive-include ampt_manager/appinit *

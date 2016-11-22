@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% set active_page = "eventmonitor" %}
+
+{% block title %}Event Monitor Details{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-6">
+    <p><a href="{{ url_for('MonitorView:index') }}"><span class="glyphicon glyphicon-chevron-left"></span> Event Monitors</a></p>
+
+    <h2>{{ object.hostname }} <small>Event Monitor</small></h2>
+    <p>
+      <span class="label label-info">Monitor ID <strong>{{ object.id }}</strong></span>
+      This AMPT event monitor is <strong class="text-{{ 'success' if object.active else 'danger' }}">{{ 'Enabled' if object.active else 'Disabled' }}</strong>.
+    </p>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>{{ object.id }}</strong></td>
+          <td>{{ object.get_type_label() }}</td>
+          <td>{{ object.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      <a href="{{ url_for('MonitorView:edit', id=object.id) }}" role="button" class="btn btn-primary">Edit</a>
+      <a href="{{ url_for('MonitorView:delete', id=object.id) }}" role="button" class="btn btn-danger">Delete</a>
+    </p>
+  </div> <!-- /.col-md-# -->
+</div> <!-- /row -->
+{% endblock %}

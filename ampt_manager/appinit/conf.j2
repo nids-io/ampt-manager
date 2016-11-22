@@ -1,0 +1,12 @@
+# AMPT manager configuration
+#
+DATABASE = "{{ dbpath }}"
+SECRET_KEY = {{ secret_key }}
+LOGFILE = "{{ logpath }}"
+ACCESS_LOGFILE = "{{ access_logpath }}"
+LOGLEVEL = "{{ loglevel }}"
+SERVER_CERTIFICATE = "{{ sslcertpath }}"
+SERVER_PRIVATE_KEY = "{{ sslkeypath }}"
+LISTEN_ADDRESS = "{{ listen_address }}"
+LISTEN_PORT = {{ listen_port }}
+SEGMENT_LIMIT_INDEX = 0

@@ -1,0 +1,111 @@
+{#
+   Navigation bar elements, used in highlighting active menu items.
+   First element:   view name for hyperlink
+   Second element:  value of 'active_page' set in child template
+   Third element:   optional Glyphicon icon name from Bootstrap (base
+                    'glyphicon' class applied automatically when set)
+   Fourth element:  name of caption to render in nav bar for menu element
+#}
+{% set navigation_bar = [
+    ('index',               'index',            'glyphicon-home',   'Home'),
+    ('SegmentView:index',   'monitoredsegment', 'glyphicon-saved',  'Monitored Segments'),
+    ('GeneratorView:index', 'probegenerator',   'glyphicon-export', 'Probe Generators'),
+    ('MonitorView:index',   'eventmonitor',     'glyphicon-import', 'Event Monitors'),
+] -%}
+{% set active_page = active_page|default('index') -%}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Cutive+Mono" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <title>AMPT :: {% block title %}{% endblock %}</title>
+  </head>
+
+  <body>
+    {% if current_user.is_authenticated %}
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{{ url_for('index') }}"><span class="glyphicon glyphicon-flash"></span> AMPT Manager</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            {% for href, id, icon, caption in navigation_bar %}
+              <li{% if id == active_page %} class="active"{% endif %}><a href="{{ url_for(href) }}">{% if icon %}<span class="glyphicon {{icon}}"></span> {% endif %}{{ caption }}</a></li>
+            {% endfor %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-list-alt"></span> Logs <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{{ url_for('GeneratedLogView:index') }}"><span class="glyphicon glyphicon-menu-right"></span> Dispatched Probes</a></li>
+                <li><a href="{{ url_for('ReceivedLogView:index') }}"><span class="glyphicon glyphicon-menu-left"></span> Received Events</a></li>
+              </ul>
+            </li>
+            <li><a href="{{ url_for('show_help') }}" data-toggle="tooltip" data-placement="right" title="Help"><span class="fa fa-question-circle fa-lg"></span></a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> {{ current_user.display_name }} <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-share-alt"></span> Log out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissable fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="container">
+    {% block body %}{% endblock %}
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted"><span class="glyphicon glyphicon-flash"></span> AMPT | Active Monitor for Passive Tools | &copy; 2016 AMPT Project</p>
+      </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    {{ moment.include_moment(local_js=url_for('static', filename='js/moment.min.js')) }}
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/site.js') }}"></script>
+  </body>
+</html>

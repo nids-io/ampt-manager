@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% set active_page = "monitoredsegment" %}
+
+{% block title %}Monitored Segment Details{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-7">
+    <p><a href="{{ url_for('SegmentView:index') }}"><span class="glyphicon glyphicon-chevron-left"></span> Monitored Segments</a></p>
+
+    <h2>{{ object.name }} <small>Monitored Segment</small></h2>
+    <p><small>Monitored Segment is <strong class="text-{{ 'success' if object.active else 'danger' }}">{{ 'Enabled' if object.active else 'Disabled' }}</strong></small></p>
+    <h4>Description</h4>
+    <p>{{ object.description }}</p>
+
+    <h4>Probe details</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Destination Address</th>
+          <th>Destination Port</th>
+          <th>Protocol</th>
+          <th>Probe Generator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ object.dest_addr }}</td>
+          <td>{{ object.dest_port }}</td>
+          <td>{{ object.get_protocol_label() }}</td>
+          <td><a href="{{ url_for('GeneratorView:get', id=object.generator.id) }}">{{ object.generator.name }}</a> ({{ 'enabled' if object.generator.active else 'disabled' }})</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      <a href="{{ url_for('SegmentView:edit', id=object.id) }}" role="button" class="btn btn-primary">Edit</a>
+      <a href="{{ url_for('SegmentView:delete', id=object.id) }}" role="button" class="btn btn-danger">Delete</a>
+    </p>
+
+  </div> <!-- /.col-md-# -->
+</div> <!-- /row -->
+{% endblock %}
+

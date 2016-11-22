@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% set active_page = "eventmonitor" %}
+
+{% block title %}Delete Event Monitor{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-7">
+    <p><a href="{{ url_for('MonitorView:index') }}"><span class="glyphicon glyphicon-chevron-left"></span> Event Monitors</a></p>
+
+    <h2>{{ monitor.hostname }} <small>Event Monitor</small></h2>
+    <p>Delete event monitor? This will remove it from AMPT.</p>
+
+    <form method="POST">
+        {{ form.csrf_token }}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+
+  </div> <!-- /.col-md-# -->
+</div> <!-- /row -->
+{% endblock %}

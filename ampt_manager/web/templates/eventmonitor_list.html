@@ -1,0 +1,35 @@
+{% extends "layout_list.html" %}
+{% set active_page = "eventmonitor" %}
+
+{% block title %}Event Monitors{% endblock %}
+
+{% block topsummary %}
+        <p><strong>Event Monitors</strong> are nodes that monitor passive sensor alerts and send monitor probe related events for monitored segments to the AMPT Manager. One or more monitors must be deployed and activated to allow AMPT to monitor for passive coverage of specified segments.</p>
+        <p>There are currently <strong>{{ objects|length }}</strong> event monitors.</p>
+        <p><a href="{{ url_for('MonitorView:create') }}" class="btn btn-success btn-sm" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new monitor</a></p>
+{% endblock %}
+
+{% block thead_content %}
+            <tr>
+              <th>Event Monitor</th>
+              <th>ID</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Active</th>
+              <th>Edit</th>
+            </tr>
+{% endblock %}
+
+{% block tbody_content %}
+            {% for monitor in objects %}
+            <tr{% if not monitor.active %} class="text-muted"{% endif %}>
+               <td><strong><a href="{{ url_for('MonitorView:get', id=monitor.id) }}">{{ monitor.hostname }}</a></strong></td>
+               <td>{{ monitor.id }}</td>
+               <td>{{ monitor.description }}</td>
+               <td>{{ monitor.get_type_label() }}</td>
+               <td>{{ 'Yes' if monitor.active else 'No' }}</td>
+               <td><a href="{{ url_for('MonitorView:edit', id=monitor.id) }}">Edit</a></td>
+            </tr>
+            {% endfor %}
+{% endblock %}
+

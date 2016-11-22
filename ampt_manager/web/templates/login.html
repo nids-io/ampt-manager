@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}Log In{% endblock %}
+
+{% block body %}
+  <div class="row" style="padding-top:25px;">
+    <div class="col-md-4 col-md-offset-4">
+      <div class="well well-sm">
+        <form method="POST" class="form-signin">
+          <h3 class="form-signin-heading">Sign in</h3>
+          {{ form.csrf_token }}
+          {{ form.username.label(class="sr-only") }}
+          {{ form.username(class="form-control", placeholder="User name", autofocus="autofocus") }}
+          {{ form.password.label(class="sr-only") }}
+          {{ form.password(class="form-control", placeholder="Password") }}
+          <div style="padding-top:5px;">
+            <button class="btn btn-block btn-primary" type="submit">Sign in</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

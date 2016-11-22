@@ -1,0 +1,37 @@
+{% extends "layout_list.html" %}
+{% set active_page = "probegenerator" %}
+
+{% block title %}Probe Generators{% endblock %}
+
+{% block topsummary %}
+        <p><strong>Probe Generators</strong> are nodes which listen for requests from the AMPT Manager to send probe packets to monitored network segments. One or more generators must be deployed and activated to configure monitoring for network segments.</p>
+        <p>There is already a default probe generator configured for the local host. To use it, deploy the <tt>ampt-generator</tt> package on the AMPT Manager and activate it below.</p>
+        <p>There are currently <strong>{{ objects|length }}</strong> probe generators.</p>
+        <p><a href="{{ url_for('GeneratorView:create') }}" class="btn btn-success btn-sm" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new generator</a></p>
+{% endblock %}
+
+{% block thead_content %}
+            <tr>
+              <th>Probe generator</th>
+              <th>Address</th>
+              <th>Port</th>
+              <th>Active</th>
+              <th>Edit</th>
+            </tr>
+{% endblock %}
+
+{% block tbody_content %}
+            {% for generator in objects %}
+            <tr{% if not generator.active %} class="text-muted"{% endif %}>
+              <td><strong><a href="{{ url_for('GeneratorView:get', id=generator.id) }}">{{ generator.name }}</a></strong></td>
+              <td>{{ generator.address }}</td>
+              <td>{{ generator.port }}</td>
+              <td>{{ 'Yes' if generator.active else 'No' }}</td>
+              <td><a href="{{ url_for('GeneratorView:edit', id=generator.id) }}">Edit</a></td>
+            </tr>
+            {% endfor %}
+{% endblock %}
+
+{% block no_records_content %}
+        <p>No probe generators exist yet.</p>
+{% endblock %}

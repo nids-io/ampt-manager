@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}Page Not Found{% endblock %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="well well-sm">
+        <h3><span class="glyphicon glyphicon-alert"></span> {{ self.title() }}</h3>
+        <p>The requested content was not found.</p>
+        <p>Return <a href="{{ url_for('index') }}">home</a>?</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

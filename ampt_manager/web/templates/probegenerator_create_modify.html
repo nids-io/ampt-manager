@@ -1,0 +1,12 @@
+{% extends "layout_create.html" %}
+{% set active_page = "probegenerator" %}
+
+{% block title %}{{ form_action }} Probe Generator{% endblock %}
+
+{% block formfields %}
+      {{ render_field(form.name) }}
+      {{ render_field(form.address) }}
+      {{ render_field(form.port) }}
+      {{ render_field(form.active) }}
+{% endblock %}
+

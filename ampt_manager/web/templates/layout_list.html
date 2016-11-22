@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-md-12">
+      <h3>{{ self.title() }}</h3>
+
+      <div class="well well-sm">
+        {% block topsummary %}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      {% if objects %}
+        <table class="table table-striped">
+          <thead>
+            {% block thead_content %}{% endblock %}
+          </thead>
+          <tbody>
+            {% block tbody_content %}{% endblock %}
+          </tbody>
+        </table>
+      {% else %}
+        <span class="text-warning">{% block no_records_content %}{% endblock %}</span>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

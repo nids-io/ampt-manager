@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+{% set active_page = "index" %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+  <div id="logo" class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <p class="text-center"style="font-size:70px;"><span class="glyphicon glyphicon-flash" style="color: #008cba;"></span><span style="font-family:'Cutive Mono', monospace">AMPT</span></p>
+    </div>
+  </div>
+
+  <div id="segments" class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Monitored Segments <span class="badge">{{ total_monitored_segments }}</span></h3>
+      </div>
+      <div class="panel-body">
+        <table class="table table-striped" style="margin-bottom:5px;">
+          <thead>
+            <tr>
+              <th>Segment</th>
+              <th>Description</th>
+              <th>Dispatched</th>
+              <th>Received</th>
+              <th>Rate</th>
+              <th>Latest Event Received</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for segment in monitored_segments %}
+              {# Set short variable names for later reuse #}
+              {% set gen_cnt = segment.generatedprobelog_set.count() %}
+              {% set recv_cnt = segment.receivedprobelog_set.count() %}
+              <tr>
+                <td>
+                  <strong><a href="{{ url_for('SegmentView:get', id=segment.id) }}">
+                    {{ segment.name }}
+                  </a></strong>
+                </td>
+                <td>{{ segment.description }}</td>
+                <td>{{ gen_cnt }}</td>
+                <td>{{ recv_cnt }}</td>
+                <td>
+                  {# Avoid divide-by-zero error if no probes dispatched yet #}
+                  {% if gen_cnt == 0 %}
+                    -
+                  {% else %}
+                    {{ (recv_cnt / gen_cnt * 100) |round() |int }}%
+                  {% endif %}
+                </td>
+                {#
+                   The annotation for latest_log_time on the MonitoredSegment
+                   will have a value of None if no event logs have been
+                   received. This isn't handled by the default filter (we need
+                   to not render it as a timestamp in such cases), so work
+                   around it conditionally with the below test instead.
+                #}
+                {% if not segment.latest_log_time %}
+                  <td>-</td>
+                {% else %}
+                  <td>{{ moment(segment.latest_log_time).format('YYYY-MM-DD HH:mm:ss ZZ') }}</td>
+                {% endif %}
+                <td><span class="text-{{ 'success' if segment.active else 'danger' }}">{{ 'Active' if segment.active else 'Inactive' }}</span></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a class="small" href="{{ url_for('SegmentView:index') }}">View All &raquo;</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="ampt_nodes" class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">AMPT Nodes</h3>
+      </div>
+      <div class="panel-body" style="padding:0px; padding-left:15px; padding-right:15px;">
+        <div class="row">
+          <div class="col-md-6 panel panel-default" style="margin-bottom:0px; border:none; padding-left:0px; padding-right:0px;">
+            <div class="panel-body">
+              <h5>Probe Generators <span class="badge">{{ total_probe_generators }}</span></h5>
+              <table class="table table-striped" style="margin-bottom:5px;">
+                <thead>
+                  <tr>
+                    <th>Generator</th>
+                    <th>Dispatched</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for generator in probe_generators %}
+                    <tr>
+                      <td>
+                        <strong><a href="{{ url_for('GeneratorView:get', id=generator.id) }}">
+                          {{ generator.name }}
+                        </a></strong>
+                      </td>
+                      <td>{{ generator.generatedprobelog_set.count() }}</td>
+                      <td><span class="text-{{ 'success' if generator.active else 'danger' }}">{{ 'Active' if generator.active else 'Inactive' }}</span></td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <a class="small" href="{{ url_for('GeneratorView:index') }}">View All &raquo;</a>
+            </div>
+          </div>
+          <div class="col-md-6 panel panel-default" style="margin-bottom:0px; border:none; padding-left:0px; padding-right:0px;">
+            <div class="panel-body">
+              <h5>Event Monitors <span class="badge">{{ total_event_monitors }}</span></h5>
+              <table class="table table-striped" style="margin-bottom:5px;">
+                <thead>
+                  <tr>
+                    <th>Monitor</th>
+                    <th>Type</th>
+                    <th>AMPT Events</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for monitor in event_monitors %}
+                    <tr>
+                      <td>
+                        <strong><a href="{{ url_for('MonitorView:get', id=monitor.id) }}">
+                          {{ monitor.hostname }}
+                        </a></strong>
+                      </td>
+                      <td>{{ monitor.get_type_label() }}</td>
+                      <td>{{ monitor.receivedprobelog_set.count() }}</td>
+                      <td><span class="text-{{ 'success' if monitor.active else 'danger' }}">{{ 'Active' if monitor.active else 'Inactive' }}</span></td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <a class="small" href="{{ url_for('MonitorView:index') }}">View All &raquo;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="recent_alerts" class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Recently Received Probe Alerts</span></h3>
+      </div>
+      <div class="panel-body">
+        <table class="table table-striped" style="margin-bottom:5px;">
+          <thead>
+            <tr>
+              <th>Received Time</th>
+              <th>Alert Time</th>
+              <th>Event Monitor</th>
+              <th>Monitored Segment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in received_logs %}
+              <tr>
+                <td>{{ moment(log.recv_time).format('YYYY-MM-DD HH:mm:ss ZZ') }}</td>
+                <td>{{ moment(log.alert_time).format('YYYY-MM-DD HH:mm:ss ZZ') }}</td>
+                <td>
+                  <a href="{{ url_for('MonitorView:get', id=log.monitor.id) }}">
+                    {{ log.monitor.hostname }} ({{ log.monitor.get_type_label() }})
+                  </a>
+                </td>
+                <td><a href="{{ url_for('SegmentView:get', id=log.segment.id) }}">{{ log.segment.name }}</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a class="small" href="{{ url_for('ReceivedLogView:index') }}">View All &raquo;</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

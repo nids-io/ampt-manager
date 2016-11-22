@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}Probe Dispatch Logs{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-md-8">
+      <h3>{{ self.title() }}</h3>
+      {% if objects %}
+        <p class="small"><strong>{{ objects.count() }}</strong> of <strong>{{ total_objects }}</strong> total probe dispatch events</p>
+        <table class="table table-striped">
+          <tr>
+             <th>Dispatched Time</th>
+             <th>Monitored Segment</th>
+             <th>Probe Generator</th>
+          </tr>
+          {% for log in objects %}
+            <tr>
+               <td>{{ moment(log.send_time).format('YYYY-MM-DD HH:mm:ss ZZ') }}</td>
+               <td>
+                 <a href="{{ url_for('SegmentView:get', id=log.monitored_segment.id) }}">
+                   {{ log.monitored_segment.name }}
+                 </a>
+               </td>
+               <td>
+                 <a href="{{ url_for('GeneratorView:get', id=log.probe_generator.id) }}">
+                   {{ log.probe_generator.name }}
+                 </a>
+               </td>
+            </tr>
+          {% endfor %}
+        </table>
+
+        {% include "probelog_pagination.html" %}
+
+      {% else %}
+        <p>No probe dispatches sent.</p>
+        <p>AMPT may not be configured and operational yet. See the <a href="{{ url_for('show_help') }}">help page</a> for information on configuring the system.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

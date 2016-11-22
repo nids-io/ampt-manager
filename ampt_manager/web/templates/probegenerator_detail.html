@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% set active_page = "probegenerator" %}
+
+{% block title %}Probe Generator Details{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-6">
+    <p><a href="{{ url_for('GeneratorView:index') }}"><span class="glyphicon glyphicon-chevron-left"></span> Probe Generators</a></p>
+
+    <h2>{{ object.name }} <small>Probe Generator</small></h2>
+    <p>This AMPT probe generator is <strong class="text-{{ 'success' if object.active else 'danger' }}">{{ 'Enabled' if object.active else 'Disabled' }}</strong>.</p>
+
+    <h4>Service details</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Address</th> <th>Port</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ object.address }}</td>
+          <td>{{ object.port }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    {% if object.monitoredsegment_set %}
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h4 class="panel-title">Monitored Segments</h4>
+        </div>
+        <div class="panel-body">
+          <p class="small">
+            This probe generator is configured to send packets for
+            <strong>{{ object.monitoredsegment_set.count() }}</strong> segment(s).
+            To delete the generator, each segment must be configured to use a different generator:
+          </p>
+          <ul>
+            {% for segment in object.monitoredsegment_set %}
+              <li><a href="{{ url_for('SegmentView:get', id=segment.id) }}">{{ segment.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% else %}
+      <p>This generator is not used by any <a href="{{ url_for('SegmentView:index') }}">Monitored Segments</a>.</p>
+    {% endif %}
+      <p>
+        <a href="{{ url_for('GeneratorView:edit', id=object.id) }}" role="button" class="btn btn-primary">Edit</a>
+        <a href="{{ url_for('GeneratorView:delete', id=object.id) }}" role="button" class="btn btn-danger{% if object.monitoredsegment_set.count() %} disabled{% endif %}">Delete</a>
+      </p>
+  </div> <!-- /.col-md-# -->
+</div> <!-- /row -->
+{% endblock %}

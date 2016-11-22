@@ -1,0 +1,15 @@
+{% extends "layout_create.html" %}
+{% set active_page = "monitoredsegment" %}
+
+{% block title %}{{ form_action }} Monitored Segment{% endblock %}
+
+{% block formfields %}
+      {{ render_field(form.name) }}
+      {{ render_field(form.description) }}
+      {{ render_field(form.dest_addr) }}
+      {{ render_field(form.dest_port) }}
+      {{ render_field(form.protocol) }}
+      {{ render_field(form.generator) }}
+      {{ render_field(form.active) }}
+{% endblock %}
+

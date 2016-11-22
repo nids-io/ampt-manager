@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% set active_page = "monitoredsegment" %}
+
+{% block title %}Delete Monitored Segment{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-7">
+    <p><a href="{{ url_for('SegmentView:index') }}"><span class="glyphicon glyphicon-chevron-left"></span> Monitored Segments</a></p>
+
+    <h2>{{ segment.name }} <small>Monitored Segment</small></h2>
+    <p>Delete monitored segment? This will remove it from AMPT.</p>
+
+    <form method="POST">
+        {{ form.csrf_token }}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+
+  </div> <!-- /.col-md-# -->
+</div> <!-- /row -->
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}Event Logs{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-md=12">
+      <h3>Received Probe Events</h3>
+
+      {% if objects %}
+        <p class="small"><strong>{{ objects.count() }}</strong> of <strong>{{ total_objects }}</strong> total probe reported events</p>
+        <table class="table table-striped">
+          <tr>
+             <th><abbr title="Timestamp of probe log report from event monitor">Received</abbr></th>
+             <th><abbr title="Timestamp of probe alert from sensor">Alert Timestamp</abbr></th>
+             <th>Event Monitor</th>
+             <th>Src IP</th>
+             <th>Src Port</th>
+             <th>Dest IP</th>
+             <th>Dest Port</th>
+             <th>Monitored Segment</th>
+          </tr>
+          {% for log in objects %}
+            <tr>
+               <td>{{ moment(log.recv_time).format('YYYY-MM-DD HH:mm:ss ZZ') }}</td>
+               <td>{{ moment(log.alert_time).format('YYYY-MM-DD HH:mm:ss ZZ') }}</td>
+               <td>
+                 <a href="{{ url_for('MonitorView:get', id=log.monitor.id) }}">
+                   {{ log.monitor.hostname }} ({{ log.monitor.get_type_label() }})
+                 </a>
+               </td>
+               <td>{{ log.src_addr }}</td>
+               <td>{{ log.src_port }}</td>
+               <td>{{ log.dest_addr }}</td>
+               <td>{{ log.dest_port }}/{{ log.protocol }}</td>
+               <td><a href="{{ url_for('SegmentView:get', id=log.segment.id) }}">{{ log.segment.name }}</a></td>
+            </tr>
+          {% endfor %}
+        </table>
+
+        {% include "probelog_pagination.html" %}
+
+      {% else %}
+        <p>No probe log events received.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
