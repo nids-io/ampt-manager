@@ -1,8 +1,10 @@
 
 The setup of a new config instance for AMPT is complete. The specified
 configuration directory contains default files for the instance as
-well as the SQLite database. Configure `ampt_manager.conf` to your
-preference and start the server.
+well as the SQLite database. Configure `{{ config_file_basename }}` to
+your preference and start the server using the following command:
+
+  ampt-manager run {{ config_file }}
 
 Default admin credentials:
 

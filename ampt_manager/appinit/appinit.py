@@ -86,5 +86,8 @@ def initialize_config(args):
     create_self_signed_cert(configdir)
 
     print(render_template('message.j2',
-                          username=admin_user, password=admin_pass))
+                          config_file=configfile,
+                          config_file_basename=settings.default_config_name,
+                          username=admin_user,
+                          password=admin_pass))
 
