@@ -101,6 +101,11 @@ def main():
 
     args = parser.parse_args()
 
+    # Error handling for no subcommand called.
+    if not hasattr(args, 'func'):
+        parser.error('Must specify command to invoke (did you mean to run '
+                     'the program)?')
+
     # Call specified command's function.
     try:
         args.func(args)
