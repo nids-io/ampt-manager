@@ -4,9 +4,10 @@
 {% block title %}Probe Generators{% endblock %}
 
 {% block topsummary %}
+        {% set obj_singular = True if objects.count() == 1 else False %}
         <p><strong>Probe Generators</strong> are nodes which listen for requests from the AMPT Manager to send probe packets to monitored network segments. One or more generators must be deployed and activated to configure monitoring for network segments.</p>
         <p>There is already a default probe generator configured for the local host. To use it, deploy the <tt>ampt-generator</tt> package on the AMPT Manager and activate it below.</p>
-        <p>There are currently <strong>{{ objects|length }}</strong> probe generators.</p>
+        <p>There {{ 'is' if obj_singular else 'are' }} currently {% if objects %}<strong>{{ objects|length }}</strong>{% else %}no{% endif %} probe generator{% if not obj_singular %}s{% endif %}.</p>
         <p><a href="{{ url_for('GeneratorView:create') }}" class="btn btn-success btn-sm" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new generator</a></p>
 {% endblock %}
 

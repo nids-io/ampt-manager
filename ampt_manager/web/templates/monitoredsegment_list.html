@@ -4,8 +4,9 @@
 {% block title %}Monitored Segments{% endblock %}
 
 {% block topsummary %}
+        {% set obj_singular = True if objects.count() == 1 else False %}
         <p><strong>Monitored Segments</strong> represent network segments that are inspected by passive monitoring devices. These provide AMPT with the information it needs to send crafted IP probe packets to specified destinations, allowing monitoring devices to alert when the probe reaches the desired segment.</p>
-        <p>There are currently <strong>{{ objects|length }}</strong> monitored segments. Before adding monitored segments, at least one <a href="{{ url_for('GeneratorView:index') }}">Probe Generator</a> must be deployed and activated.</p>
+        <p>There {{ 'is' if obj_singular else 'are' }} currently {% if objects %}<strong>{{ objects|length }}</strong>{% else %}no{% endif %} monitored segment{% if not obj_singular %}s{% endif %}. Before adding segments, at least one <a href="{{ url_for('GeneratorView:index') }}">Probe Generator</a> must be deployed and activated.</p>
         <p><a href="{{ url_for('SegmentView:create') }}" class="btn btn-success btn-sm" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new segment</a></p>
 {% endblock %}
 

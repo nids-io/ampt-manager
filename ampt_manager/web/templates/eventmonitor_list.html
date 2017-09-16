@@ -4,8 +4,9 @@
 {% block title %}Event Monitors{% endblock %}
 
 {% block topsummary %}
-        <p><strong>Event Monitors</strong> are nodes that monitor passive sensor alerts and send monitor probe related events for monitored segments to the AMPT Manager. One or more monitors must be deployed and activated to allow AMPT to monitor for passive coverage of specified segments.</p>
-        <p>There are currently <strong>{{ objects|length }}</strong> event monitors.</p>
+        {% set obj_singular = True if objects.count() == 1 else False %}
+        <p><strong>Event Monitors</strong> are nodes that monitor passive sensor alerts and send probe related events for monitored segments to the AMPT Manager. One or more monitors must be deployed and activated to allow AMPT to monitor for passive coverage of specified segments.</p>
+        <p>There {{ 'is' if obj_singular else 'are' }} currently {% if objects %}<strong>{{ objects|length }}</strong>{% else %}no{% endif %} event monitor{% if not obj_singular %}s{% endif %}.</p>
         <p><a href="{{ url_for('MonitorView:create') }}" class="btn btn-success btn-sm" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new monitor</a></p>
 {% endblock %}
 
