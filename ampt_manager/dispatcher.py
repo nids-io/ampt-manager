@@ -102,10 +102,14 @@ def send_probe_requests(args):
 
     # Dispatch
     active_segments = MonitoredSegment.select().where(MonitoredSegment.active == True)
-    msg = 'preparing to dispatch probe requests for {cnt} monitored segments'
-    app.logger.info(msg.format(cnt=active_segments.count()))
+    if active_segments:
+        msg = 'preparing to dispatch probe requests for {cnt} monitored segments'
+        app.logger.info(msg.format(cnt=active_segments.count()))
 
-    for segment in active_segments:
-        pr = ProbeRequest(segment)
-        pr.dispatch_probe_request()
+        for segment in active_segments:
+            pr = ProbeRequest(segment)
+            pr.dispatch_probe_request()
+    else:
+        msg = 'there are no active monitored segments!'
+        app.logger.error(msg)
 
