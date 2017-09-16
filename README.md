@@ -30,7 +30,7 @@ deploy and provides the following:
 
 Other AMPT components include:
 
-* [ampt-generator][ampt_generator] -  Healthcheck packet generator for the
+* [ampt-generator][ampt_generator] -  Health check packet generator for the
   AMPT passive network tools monitor
 * [ampt-monitor][ampt_monitor] -  Sensor alert monitor core package for the
   AMPT passive network tools monitor
