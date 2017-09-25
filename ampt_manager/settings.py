@@ -38,3 +38,7 @@ default_ssl_key_name = 'ampt_manager.key'
 default_ssl_key_size = 2048
 # Maximum number of Gunicorn workers
 gunicorn_workers_max = 5
+# HMAC digest name
+# May be set to any supported digest name:
+# https://docs.python.org/3/library/hashlib.html#hashlib.new
+default_hmac_digest = 'sha256'
