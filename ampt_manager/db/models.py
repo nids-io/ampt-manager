@@ -47,14 +47,29 @@ class User(BaseModel, UserMixin):
         return '%s (%s)' % (self.username, self.display_name)
 
 class ProbeGenerator(BaseModel):
-    name = CharField(max_length=75, unique=True, help_text='Name of generator node')
-    address = CharField(max_length=150, help_text='Address (hostname or IP) of generator node')
+    name = CharField(max_length=75, unique=True,
+                     help_text='Name of generator node')
+    address = CharField(max_length=150,
+                        help_text='Address (hostname or IP) of generator node')
     port = IntegerField(default=settings.probe_generator_default_port)
+    auth_key = CharField(max_length=150,
+                         help_text='Authentication key for generator node')
     active = BooleanField(default=True)
-    created_date = DateField(default=datetime.datetime.utcnow, help_text='Date generator was added to configuration')
-    modified_date = DateField(default=datetime.datetime.utcnow, help_text='Date generator was last modified')
-    created_by = ForeignKeyField(User, related_name='created_probegenerator_set', help_text='User that added generator')
-    last_modified_by = ForeignKeyField(User, related_name='modified_probegenerator_set', help_text='User that modified generator')
+    created_date = DateField(default=datetime.datetime.utcnow,
+                             help_text='Date generator was added '
+                                       'to configuration')
+    modified_date = DateField(default=datetime.datetime.utcnow,
+                              help_text='Date generator was last modified')
+    created_by       = ForeignKeyField(
+                           User,
+                           related_name='created_probegenerator_set',
+                           help_text='User that added generator'
+                       )
+    last_modified_by = ForeignKeyField(
+                           User,
+                           related_name='modified_probegenerator_set',
+                           help_text='User that modified generator'
+                       )
 
     class Meta:
         # Unique multi-column index on generator address/port

@@ -4,6 +4,9 @@ AMPT manager probe packet dispatcher.
 Dispatches monitoring probe requests to AMPT generators.
 '''
 
+import hmac
+import json
+import time
 import random
 import logging
 import requests
@@ -35,12 +38,27 @@ class ProbeRequest(object):
                                              generator=self.generator))
             return
 
+        # Define base parameters providing info needed by generator to
+        # validate request and dispatch packet. The four-tuple of destination
+        # address, source and destination port and protocol are required to
+        # dispatch probes, and the timestamp field provides an incrementing
+        # counter of sorts for some replay protection.
         params = {
             'dest_addr': self.segment.dest_addr,
             'dest_port': self.segment.dest_port,
             'src_port': random.randrange(1024, 65535),
             'proto': self.segment.protocol,
+            'ts': time.time(),
         }
+        # HMAC: build message from unindented, key-sorted JSON of parameters
+        j = json.dumps(params, sort_keys=True)
+        # HMAC: compute with generator auth key and message digest
+        # from configuration
+        h = hmac.new(bytes(self.generator.auth_key.encode('utf-8')),
+                     j.encode('utf-8'), app.config['HMAC_DIGEST'])
+        # HMAC: append hex digest to request parameters
+        params.update(h=h.hexdigest())
+
         generator = 'http://{address}:{port}/api/generate_probe'.format(
             address=self.generator.address, port=self.generator.port)
         try:

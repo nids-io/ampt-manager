@@ -110,13 +110,16 @@ class SegmentView(FlaskView):
     @route('/create/', methods=['GET', 'POST'])
     def create(self):
         form = MonitoredSegmentCreateModifyForm()
-	# For some reason data from form submission sets the generator
-	# field to a str type instead of int and leads to this exception
+        # XXX bug
+	# For some reason data from form submission sets the generator and dest_port
+	# fields to a str type instead of int and leads to these types of exceptions
 	# in form.validate_on_submit():
         #   TypeError: unorderable types: str() < int()
-	# So we make it an int explicitly:
+        #   TypeError: '<' not supported between instances of 'str' and 'int'
+	# So we make them an int explicitly:
         if request.method == 'POST':
             form.generator.data = int(form.generator.data)
+            form.dest_port.data = int(form.dest_port.data)
         if form.validate_on_submit():
             segment = MonitoredSegment()
             form.populate_obj(segment)
@@ -144,6 +147,15 @@ class SegmentView(FlaskView):
     def edit(self, id):
         segment = get_object_or_404(MonitoredSegment, MonitoredSegment.id==id)
         form = MonitoredSegmentCreateModifyForm(obj=segment)
+        # XXX bug
+	# For some reason data from form submission sets the generator and dest_port
+	# fields to a str type instead of int and leads to this exception
+	# in form.validate_on_submit():
+        #   TypeError: '<' not supported between instances of 'str' and 'int'
+	# So we make them ints explicitly:
+        if request.method == 'POST':
+            form.generator.data = int(form.generator.data)
+            form.dest_port.data = int(form.dest_port.data)
         if form.validate_on_submit():
             form.populate_obj(segment)
             segment.modified_date = datetime.datetime.utcnow()

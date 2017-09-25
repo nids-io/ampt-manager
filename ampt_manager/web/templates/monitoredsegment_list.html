@@ -25,7 +25,7 @@
             <tr{% if not segment.active %} class="text-muted"{% endif %}>
                <td><strong><a href="{{ url_for('SegmentView:get', id=segment.id) }}">{{ segment.name }}</a></strong></td>
                <td>{{ segment.description }}</td>
-               <td><a href="{{ url_for('GeneratorView:get', id=segment.generator.id) }}">{{ segment.generator.name }}</a></td>
+               <td><a href="{{ url_for('GeneratorView:get', id=segment.generator.id) }}">{{ segment.generator.name }}</a> ({{ 'enabled' if segment.generator.active else 'disabled' }})</td>
                <td>{{ 'Yes' if segment.active else 'No' }}</td>
                <td><a href="{{ url_for('SegmentView:edit', id=segment.id) }}">Edit</a></td>
             </tr>

@@ -63,7 +63,8 @@ def initialize_config(args):
             listen_address=settings.default_listen_address,
             listen_port=settings.default_listen_port,
             sslcertpath=sslcertpath,
-            sslkeypath=sslkeypath))
+            sslkeypath=sslkeypath,
+            hmac_digest=settings.default_hmac_digest))
 
     # Import done late so that models have a database configuration when loaded
     os.environ['AMPT_MANAGER_SETTINGS'] = configfile

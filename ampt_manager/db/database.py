@@ -65,6 +65,7 @@ def initialize_database(args, admin_user, admin_pw):
     ProbeGenerator.create(name='Local',
                           address='localhost',
                           port=settings.probe_generator_default_port,
+                          auth_key='',
                           active=False,
                           created_by=initial_user,
                           last_modified_by=initial_user)
