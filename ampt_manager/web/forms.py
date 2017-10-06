@@ -45,11 +45,15 @@ class AMPTObjectDeleteForm(FlaskForm):
     submitted = SubmitField('Delete Me')
 
 class ReceivedProbeLogForm(FlaskForm):
+    # Form functions as more of an API endpoint so no CSRF needed/possible
+    class Meta:
+        csrf = False
+
     monitor = IntegerField('Event Monitor', [validators.InputRequired(), validators.NumberRange(1)], description='Monitor which delivered probe event')
     src_addr = StringField('Source IP', [validators.InputRequired(), validators.IPAddress()], description='Source IP in observed probe packet')
     dest_addr = StringField('Destination IP', [validators.InputRequired(), validators.IPAddress()], description='Destination IP in observed probe packet')
     src_port = IntegerField('Source Port', [validators.InputRequired(), validators.NumberRange(0, 65535)], description='Source port in observed probe packet')
     dest_port = IntegerField('Destination Port', [validators.InputRequired(), validators.NumberRange(0, 65535)], description='Destination port in observed probe packet')
     protocol = SelectField('Protocol', [validators.InputRequired()], choices=PROBE_PROTOCOLS, description='IP protocol in observed probe packet')
-    alert_time = DateTimeField('Alert Time', [validators.InputRequired()], description='Timestamp of probe alert on remote sensor')
+    alert_time = DateTimeField('Alert Time', [validators.InputRequired()], format='%Y-%m-%dT%H:%M:%S', description='Timestamp of probe alert on remote sensor')
 

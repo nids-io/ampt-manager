@@ -311,7 +311,7 @@ class ReceivedLogView(FlaskView):
         event monitor. This view does not require a login session to access.
 
         '''
-        form = ReceivedProbeLogForm(csrf_enabled=False)
+        form = ReceivedProbeLogForm()
         if form.validate_on_submit():
             # Match the monitor ID to a configured Event Monitor instance
             try:
