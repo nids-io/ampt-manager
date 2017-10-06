@@ -1,9 +1,11 @@
-'AMPT manager CLI invocation'
+'AMPT Manager CLI invocation'
 
 import os
 import sys
 import argparse
+
 from .appinit.appinit import initialize_config
+
 
 LOGLEVEL_CHOICES = ['debug', 'info', 'warning', 'error', 'critical']
 

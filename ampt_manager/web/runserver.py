@@ -8,14 +8,17 @@ configuration file and arguments passed at command line.
 from __future__ import unicode_literals
 import os
 import ssl
+import sys
 import logging
 import multiprocessing
 
 import gunicorn.app.base
 from gunicorn.six import iteritems
+from flask import __version__ as flask_version
 
 from . import app
 from .. import settings
+from .. import __version__ as ampt_mgr_version
 
 
 MAX_WORKERS = settings.gunicorn_workers_max
@@ -80,12 +83,14 @@ def run_server(args):
     }
 
     sa = StandaloneApplication(app, options)
-    app.logger.info('Starting AMPT Manager')
-    crypto_msg = ('Configuring server for TLS using {ssl_version} and '
-                  'cipher set {ciphers} ({openssl_version})')
+
+    ver_dep_msg = ('running on Python %s using Flask %s')
+    py_version = '.'.join([str(x) for x in sys.version_info[:3]])
+    crypto_msg = ('configuring server for TLS using %s and cipher set %s (%s)')
     ssl_version = ssl.get_protocol_name(sa.cfg.ssl_options.get('ssl_version'))
     ciphers = sa.cfg.ssl_options.get('ciphers')
-    app.logger.info(crypto_msg.format(ssl_version=ssl_version,
-                                      ciphers=ciphers,
-                                      openssl_version=ssl.OPENSSL_VERSION))
+    app.logger.info('starting AMPT Manager %s', ampt_mgr_version)
+    app.logger.debug(ver_dep_msg, py_version, flask_version)
+    app.logger.info(crypto_msg, ssl_version, ciphers, ssl.OPENSSL_VERSION)
+
     sa.run()
