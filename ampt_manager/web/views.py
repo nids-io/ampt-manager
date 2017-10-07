@@ -1,8 +1,10 @@
 '''
-AMPT manager application views
+AMPT Manager application views
+
 '''
 
 import datetime
+
 from peewee import fn, JOIN, IntegrityError
 from playhouse.flask_utils import get_object_or_404, object_list
 from flask import render_template, request, url_for, redirect, flash
@@ -489,9 +491,9 @@ def logout():
                                ip=request.remote_addr))
     return redirect(url_for('index'))
 
-@app.route('/help/')
+@app.route('/about/')
 @login_required
-def show_help():
-    'Render help template'
-    return render_template('help.html')
+def show_about():
+    'Render about template'
+    return render_template('about.html')
 
