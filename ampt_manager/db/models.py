@@ -137,6 +137,7 @@ class ReceivedProbeLog(BaseModel):
     src_port = IntegerField(help_text='Source port from probe packet alert')
     dest_port = IntegerField(help_text='Destination port from probe packet alert')
     protocol = CharField(choices=PROBE_PROTOCOLS, help_text='IP protocol from probe packet alert')
+    hostname = CharField(help_text='Hostname of remote AMPT monitor')
     recv_time = DateTimeField(default=datetime.datetime.utcnow, help_text='Timestamp for event log receipt by manager')
     alert_time = DateTimeField(help_text='Timestamp for probe alert creation on reporting sensor device')
     segment = ForeignKeyField(MonitoredSegment, help_text='Monitored Segment match for probe log')

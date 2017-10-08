@@ -27,7 +27,7 @@
                <td>
                  <a href="{{ url_for('MonitorView:get', id=log.monitor.id) }}">
                    {{ log.monitor.hostname }} ({{ log.monitor.get_type_label() }})
-                 </a>
+                 </a> - {{ log.hostname }}
                </td>
                <td>{{ log.src_addr }}</td>
                <td>{{ log.src_port }}</td>
