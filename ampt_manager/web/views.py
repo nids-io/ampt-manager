@@ -320,10 +320,11 @@ class ReceivedLogView(FlaskView):
                 matched_monitor = EventMonitor.get(
                     EventMonitor.id == int(form.monitor.data))
             except EventMonitor.DoesNotExist:
-                logmsg = ('rejected probe log received from {ip} with unknown '
-                          'monitor ID {id}')
-                app.logger.warning(logmsg.format(id=form.monitor.data,
-                                                 ip=request.remote_addr))
+                logmsg = ('rejected probe log received from {host} [{ip}] '
+                          'with unknown monitor ID {id}')
+                app.logger.warning(logmsg.format(host=form.hostname.data,
+                                                 ip=request.remote_addr,
+                                                 id=form.monitor.data))
                 errmsg = 'rejected probe log from unknown monitor ID {id}'
                 raise InvalidUsage(errmsg.format(id=form.monitor.data))
             # Match the destination IP and port to a configured Monitored
@@ -333,12 +334,13 @@ class ReceivedLogView(FlaskView):
                     MonitoredSegment.dest_addr == form.dest_addr.data,
                     MonitoredSegment.dest_port == form.dest_port.data)
             except MonitoredSegment.DoesNotExist:
-                logmsg = ('rejected probe log from {ip} with unknown monitored '
-                          'segment parameters (dest_addr={dest_addr} and '
-                          'dest_port={dest_port})')
+                logmsg = ('rejected probe log from {host} [{ip}] with unknown '
+                          'monitored segment parameters (dest_addr={dest_addr} '
+                          'and dest_port={dest_port})')
                 logmsg = logmsg.format(dest_addr=form.dest_addr.data,
                                        dest_port=form.dest_port.data,
-                                       ip=request.remote_addr)
+                                       ip=request.remote_addr,
+                                       host=form.hostname.data)
                 app.logger.warn(logmsg)
                 errmsg = ('rejected probe log with unknown monitored segment '
                           'destination {dest_addr}:{dest_port}')
@@ -354,8 +356,9 @@ class ReceivedLogView(FlaskView):
             # Store new received event log instance
             try:
                 eventlog.save()
-                logmsg = 'probe log event accepted from {ip} {monitor}'
-                app.logger.info(logmsg.format(ip=request.remote_addr,
+                logmsg = 'probe log event accepted from {host} [{ip}] {monitor}'
+                app.logger.info(logmsg.format(host=form.hostname.data,
+                                              ip=request.remote_addr,
                                               monitor=matched_monitor))
                 response_msg = 'accepted event log (id={id})'.format(id=eventlog.id)
                 return jsonify({
@@ -364,15 +367,19 @@ class ReceivedLogView(FlaskView):
             except Exception as e:
                 # Log exception but let response fall through to end of view
                 # without exception details
-                logmsg = ('failed to record probe log event from {monitor} '
-                          'due to error: {err}')
-                app.logger.error(logmsg.format(monitor=matched_monitor,
+                logmsg = ('failed to record probe log event from {host} [{ip}] '
+                          '{monitor} due to error: {err}')
+                app.logger.error(logmsg.format(host=form.hostname.data,
+                                               ip=request.remote_addr,
+                                               monitor=matched_monitor,
                                                err=e))
         else:
             # Submitted form did not validate
             errmsg = ('errors occurred in validating submission '
-                      'from {ip}: {errors}')
-            errmsg = errmsg.format(ip=request.remote_addr, errors=form.errors)
+                      'from {host [{ip}]: {errors}')
+            errmsg = errmsg.format(host=form.hostname.data,
+                                   ip=request.remote_addr,
+                                   errors=form.errors)
             app.logger.warning(errmsg)
             raise InvalidUsage(errmsg)
 
