@@ -1,7 +1,7 @@
 '''
 AMPT probe event segment health verification
-'''
 
+'''
 import logging
 import datetime
 
@@ -42,15 +42,18 @@ def verify_probe_events(args):
                                        .order_by(MonitoredSegment.name))
     active_segments_count = active_segments.count()
     msg = 'Active segments: {segments}'
-    app.logger.debug(msg.format(segments=', '.join(['id={id}/{name}'.format(id=s.id, name=s.name) for s in active_segments])))
+    app.logger.debug(msg.format(segments=', '.join(['id={id}/{name}'
+                     .format(id=s.id, name=s.name) for s in active_segments])))
     if not active_segments_count:
         app.logger.warning('No active monitored segments are configured')
         return 1
     else:
-        msg = ('Verifying {count} monitored segment(s) for alerts '
-               'over previous {period} minutes')
+        msg = ('Verifying {count} monitored {s} for alerts '
+               'over previous {period} {m}')
         app.logger.info(msg.format(count=active_segments_count,
-                                   period=args.period))
+                                   period=args.period,
+                                   s='segment' if active_segments_count == 1 else 'segments',
+                                   m='minute' if args.period == 1 else 'minutes'))
 
     # Check each segment for any probe alert events occuring between the
     # specified period and now. Because we consult the alert time for the
@@ -64,7 +67,8 @@ def verify_probe_events(args):
     # rather than querying for each segment individually.
     #
     for segment in active_segments:
-        start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=args.period)
+        start_time = (datetime.datetime.utcnow()
+                      - datetime.timedelta(minutes=args.period))
         end_time = datetime.datetime.utcnow()
         app.logger.debug('Alert time period between {start} - {end}'
                          .format(start=start_time, end=end_time))
