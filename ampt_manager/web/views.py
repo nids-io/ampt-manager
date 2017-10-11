@@ -356,10 +356,11 @@ class ReceivedLogView(FlaskView):
             # Store new received event log instance
             try:
                 eventlog.save()
-                logmsg = 'probe log event accepted from {host} [{ip}] {monitor}'
+                logmsg = 'probe log event accepted from {plugin} on {host} [{ip}] {monitor}'
                 app.logger.info(logmsg.format(host=form.hostname.data,
                                               ip=request.remote_addr,
-                                              monitor=matched_monitor))
+                                              monitor=matched_monitor,
+                                              plugin=form.plugin_name.data))
                 response_msg = 'accepted event log (id={id})'.format(id=eventlog.id)
                 return jsonify({
                     'message': response_msg,

@@ -14,6 +14,7 @@
              <th><abbr title="Timestamp of probe log report from event monitor">Received</abbr></th>
              <th><abbr title="Timestamp of probe alert from sensor">Alert Timestamp</abbr></th>
              <th>Event Monitor</th>
+             <th>Plugin</th>
              <th>Src IP</th>
              <th>Src Port</th>
              <th>Dest IP</th>
@@ -29,6 +30,7 @@
                    {{ log.monitor.hostname }} ({{ log.monitor.get_type_label() }})
                  </a> - {{ log.hostname }}
                </td>
+               <td>{{ log.plugin_name }}</td>
                <td>{{ log.src_addr }}</td>
                <td>{{ log.src_port }}</td>
                <td>{{ log.dest_addr }}</td>

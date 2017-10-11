@@ -57,4 +57,5 @@ class ReceivedProbeLogForm(FlaskForm):
     protocol = SelectField('Protocol', [validators.InputRequired()], choices=PROBE_PROTOCOLS, description='IP protocol in observed probe packet')
     alert_time = DateTimeField('Alert Time', [validators.InputRequired()], format='%Y-%m-%dT%H:%M:%S', description='Timestamp of probe alert on remote sensor')
     hostname = StringField('Monitor Hostname', [validators.InputRequired()], description='Hostname of remote AMPT monitor')
+    plugin_name = StringField('Monitor Plugin Name', [validators.InputRequired()], description='Name of plugin handling event on remote AMPT monitor')
 
