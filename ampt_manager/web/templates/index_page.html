@@ -13,7 +13,7 @@
   <div id="segments" class="row">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">Monitored Segments <span class="badge">{{ total_monitored_segments }}</span></h3>
+        <h3 class="panel-title">Monitored Segments</h3>
       </div>
       <div class="panel-body">
         <table class="table table-striped" style="margin-bottom:5px;">
@@ -81,7 +81,7 @@
         <div class="row">
           <div class="col-md-6 panel panel-default" style="margin-bottom:0px; border:none; padding-left:0px; padding-right:0px;">
             <div class="panel-body">
-              <h5>Probe Generators <span class="badge">{{ total_probe_generators }}</span></h5>
+              <h5>Probe Generators</h5>
               <table class="table table-striped" style="margin-bottom:5px;">
                 <thead>
                   <tr>
@@ -109,7 +109,7 @@
           </div>
           <div class="col-md-6 panel panel-default" style="margin-bottom:0px; border:none; padding-left:0px; padding-right:0px;">
             <div class="panel-body">
-              <h5>Event Monitors <span class="badge">{{ total_event_monitors }}</span></h5>
+              <h5>Event Monitors</h5>
               <table class="table table-striped" style="margin-bottom:5px;">
                 <thead>
                   <tr>
@@ -154,6 +154,7 @@
               <th>Received Time</th>
               <th>Alert Time</th>
               <th>Event Monitor</th>
+              <th>Monitor Plugin</th>
               <th>Monitored Segment</th>
             </tr>
           </thead>
@@ -167,6 +168,7 @@
                     {{ log.monitor.hostname }} ({{ log.monitor.get_type_label() }})
                   </a>
                 </td>
+                <td>{{ log.plugin_name }}</td>
                 <td><a href="{{ url_for('SegmentView:get', id=log.segment.id) }}">{{ log.segment.name }}</a></td>
               </tr>
             {% endfor %}
