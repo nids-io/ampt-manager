@@ -46,7 +46,7 @@ class ProbeRequest(object):
         params = {
             'dest_addr': self.segment.dest_addr,
             'dest_port': self.segment.dest_port,
-            'src_port': random.randrange(1024, 65535),
+            'src_port': random.randrange(49152, 65535),
             'proto': self.segment.protocol,
             'ts': time.time(),
         }
