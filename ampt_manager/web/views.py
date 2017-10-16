@@ -311,7 +311,10 @@ class ReceivedLogView(FlaskView):
 
         Submission requires a form POST containing the 5-tuple of protocol
         header data for the model as well as the integer ID of the remote
-        event monitor. This view does not require a login session to access.
+        event monitor.
+
+        This view does not require a login session to access (handled in
+        respective form class).
 
         '''
         form = ReceivedProbeLogForm()
@@ -378,7 +381,7 @@ class ReceivedLogView(FlaskView):
         else:
             # Submitted form did not validate
             errmsg = ('errors occurred in validating submission '
-                      'from {host [{ip}]: {errors}')
+                      'from {host} [{ip}]: {errors}')
             errmsg = errmsg.format(host=form.hostname.data,
                                    ip=request.remote_addr,
                                    errors=form.errors)
