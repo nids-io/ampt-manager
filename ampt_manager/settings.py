@@ -16,6 +16,10 @@ DEFAULT_LOG_LEVEL = 'warning'
 PAGINATION_CNT_LOGS = 50
 # Number of MonitoredSegment items to show on app index page. 0 means unlimited.
 SEGMENT_LIMIT_INDEX = 0
+# HMAC digest name
+# May be set to any supported digest name:
+# https://docs.python.org/3/library/hashlib.html#hashlib.new
+HMAC_DIGEST = 'sha256'
 
 # Default name for configuration file
 default_config_name = 'ampt_manager.conf'
@@ -38,7 +42,6 @@ default_ssl_key_name = 'ampt_manager.key'
 default_ssl_key_size = 2048
 # Maximum number of Gunicorn workers
 gunicorn_workers_max = 5
-# HMAC digest name
-# May be set to any supported digest name:
-# https://docs.python.org/3/library/hashlib.html#hashlib.new
-default_hmac_digest = 'sha256'
+# Counter database defaults
+default_counter_db_name = 'ampt_manager.ctr'
+counter_db_init_val = 0

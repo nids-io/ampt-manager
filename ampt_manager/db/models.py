@@ -84,6 +84,8 @@ class EventMonitor(BaseModel):
     hostname = CharField(max_length=150, help_text='Hostname of event monitor system')
     description = CharField(max_length=150, help_text='Description of event monitor system')
     type = CharField(choices=MONITOR_TYPES, help_text='Sensor type')
+    auth_key = CharField(max_length=150,
+                         help_text='Authentication key for monitor node')
     active = BooleanField(default=True)
     created_date = DateField(default=datetime.datetime.utcnow, help_text='Date monitor was added to configuration')
     modified_date = DateField(default=datetime.datetime.utcnow, help_text='Date monitor was last modified')

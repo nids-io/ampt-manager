@@ -15,13 +15,25 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Address</th> <th>Port</th> <th>Auth Key</th>
+          <th>Address</th> <th>Port</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>{{ object.address }}</td>
           <td>{{ object.port }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Auth Key</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
           <td>{{ object.auth_key }}</td>
         </tr>
       </tbody>

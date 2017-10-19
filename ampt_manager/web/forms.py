@@ -1,13 +1,15 @@
 '''
-Forms for the AMPT manager
-'''
+Forms for AMPT Manager
 
-from wtforms import Form, BooleanField, StringField, IntegerField, PasswordField
+'''
+from wtforms import (Form, BooleanField, StringField, IntegerField,
+                     PasswordField, DecimalField)
 from wtforms import SelectField, SubmitField, DateTimeField, validators
 from flask_wtf import FlaskForm
 
 from .. import settings
 from ..db.models import PROBE_PROTOCOLS, MONITOR_TYPES
+from . import validators as ampt_validators
 from ..db.database import get_generator_choices
 
 
@@ -29,9 +31,10 @@ class MonitoredSegmentCreateModifyForm(FlaskForm):
     active = BooleanField('Enable Segment', default=True)
 
 class EventMonitorCreateModifyForm(FlaskForm):
-    hostname = StringField('Hostname', [validators.InputRequired()], description='Hostname of event monitor system', render_kw={'autofocus': 'autofocus'})
+    hostname = StringField('Hostname', [validators.InputRequired()], description='Hostname of event monitor node', render_kw={'autofocus': 'autofocus'})
     description = StringField('Description', [validators.InputRequired()], description='Description of event monitor system', render_kw={'size': 45})
     type = SelectField('Monitor Type', [validators.required()], choices=MONITOR_TYPES, description='Type of Monitor')
+    auth_key = StringField('Auth Key', [validators.InputRequired()], description='Authentication key for monitor node', render_kw={'size': 35})
     active = BooleanField('Enable Monitor', default=True)
 
 class ProbeGeneratorCreateModifyForm(FlaskForm):
@@ -45,7 +48,7 @@ class AMPTObjectDeleteForm(FlaskForm):
     submitted = SubmitField('Delete Me')
 
 class ReceivedProbeLogForm(FlaskForm):
-    # Form functions as more of an API endpoint so no CSRF needed/possible
+    # Form functions as more of an API endpoint so no CSRF needed
     class Meta:
         csrf = False
 
@@ -58,4 +61,6 @@ class ReceivedProbeLogForm(FlaskForm):
     alert_time = DateTimeField('Alert Time', [validators.InputRequired()], format='%Y-%m-%dT%H:%M:%S', description='Timestamp of probe alert on remote sensor')
     hostname = StringField('Monitor Hostname', [validators.InputRequired()], description='Hostname of remote AMPT monitor')
     plugin_name = StringField('Monitor Plugin Name', [validators.InputRequired()], description='Name of plugin handling event on remote AMPT monitor')
+    h = StringField('HMAC Digest', [validators.InputRequired(), ampt_validators.VerifiedHMAC(exclude_fields=['h'])], description='HMAC digest of received log message')
+    ts = StringField('Timestamp Counter', [validators.InputRequired(), ampt_validators.VerifiedCounter()], description='Timestamp counter for received log message')
 

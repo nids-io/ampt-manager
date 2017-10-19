@@ -1,5 +1,6 @@
 '''
-Initialize new AMPT manager instance
+New AMPT Manager instance initialization
+
 '''
 
 import os
@@ -7,10 +8,27 @@ import os.path
 import stat
 import random
 import string
+
 from jinja2 import Environment, PackageLoader
 
 from .. import settings
 
+
+def prep_counter_db(db_path, user=None, group=None):
+    '''Initialize new counter DB file.
+
+    If user and group are specified, caller is a privileged process specifying
+    ownership of file by less privileged user/group.
+
+    '''
+    from ..web.validators import persist_counter
+    try:
+        persist_counter(db_path)
+    except FileNotFoundError as e:
+        os.makedirs(os.path.dirname(db_path))
+        persist_counter(db_path)
+    if user is not None and group is not None:
+        chown(db_path, user, group)
 
 def get_random_admin_pass(n):
     '''
@@ -50,6 +68,7 @@ def initialize_config(args):
     access_logpath = os.path.join(configdir, settings.default_access_log_name)
     sslcertpath = os.path.join(configdir, settings.default_ssl_cert_name)
     sslkeypath = os.path.join(configdir, settings.default_ssl_key_name)
+    counterpath = os.path.join(configdir, settings.default_counter_db_name)
     secret_key = os.urandom(24)
 
     # Write out new configuration
@@ -64,7 +83,7 @@ def initialize_config(args):
             listen_port=settings.default_listen_port,
             sslcertpath=sslcertpath,
             sslkeypath=sslkeypath,
-            hmac_digest=settings.default_hmac_digest))
+            counterpath=counterpath))
 
     # Import done late so that models have a database configuration when loaded
     os.environ['AMPT_MANAGER_SETTINGS'] = configfile
@@ -85,6 +104,10 @@ def initialize_config(args):
     # Create self-signed certificate and key for SSL support
     from .certificate import create_self_signed_cert
     create_self_signed_cert(configdir)
+
+    # Initialize counter file (used for HMAC verification on AMPT Monitor
+    # communications)
+    prep_counter_db(counterpath)
 
     print(render_template('message.j2',
                           config_file=configfile,

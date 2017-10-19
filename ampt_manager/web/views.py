@@ -20,6 +20,7 @@ from .forms import *
 from .. import settings
 from ..db.models import *
 from .crypt import bcrypt
+from .validators import persist_counter
 from ..exceptions import InvalidUsage
 
 
@@ -317,8 +318,12 @@ class ReceivedLogView(FlaskView):
         respective form class).
 
         '''
+        app.logger.debug('new inbound probe log submission request')
         form = ReceivedProbeLogForm()
         if form.validate_on_submit():
+            # Submitted data passed validation, update counter file
+            persist_counter(app.config['COUNTER_PATH'], ctr=form.ts.data)
+
             # Match the monitor ID to a configured Event Monitor instance
             try:
                 matched_monitor = EventMonitor.get(
