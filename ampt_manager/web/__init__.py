@@ -49,8 +49,8 @@ login_manager.init_app(app)
 # No SQLAlchemy here so disable panel.
 toolbar = DebugToolbarExtension()
 toolbar.init_app(app)
-app.config['DEBUG_TB_PANELS'] = tuple(x for x in app.config['DEBUG_TB_PANELS'] if x not in
-    'flask_debugtoolbar.panels.sqlalchemy.SQLAlchemyDebugPanel',
+app.config['DEBUG_TB_PANELS'] = tuple([x for x in app.config['DEBUG_TB_PANELS'] if x not in
+    'flask_debugtoolbar.panels.sqlalchemy.SQLAlchemyDebugPanel']
 )
 
 # Activate Flask-Moment
