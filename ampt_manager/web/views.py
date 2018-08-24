@@ -47,8 +47,9 @@ class GeneratorView(FlaskView):
                 generator.save()
                 msg = 'Added probe generator "{name}"'
                 flash(msg.format(name=generator.name), 'success')
-                logmsg = '{generator} added by user {user}'
-                app.logger.info(logmsg.format(generator=generator,
+                logmsg = 'ProbeGenerator {generator} (ID: {generator_id}) added by user {user}'
+                app.logger.info(logmsg.format(generator=generator.name,
+                                              generator_id=generator.id,
                                               user=current_user.username))
             except IntegrityError as e:
                 msg = 'Error adding probe generator: {err}'
@@ -90,8 +91,9 @@ class GeneratorView(FlaskView):
             generator.delete_instance()
             msg = 'Deleted probe generator "{name}"'
             flash(msg.format(name=generator.name), 'success')
-            logmsg = '{generator} deleted by user {user}'
-            app.logger.info(logmsg.format(generator=generator,
+            logmsg = 'ProbeGenerator {generator} (ID: {generator_id}) deleted by user {user}'
+            app.logger.info(logmsg.format(generator=generator.name,
+                                          generator_id=generator.id,
                                           user=current_user.username))
             return redirect(url_for('GeneratorView:index'))
         return render_template('probegenerator_delete.html',
@@ -133,8 +135,9 @@ class SegmentView(FlaskView):
                 segment.save()
                 msg = 'Added segment "{segment}"'
                 flash(msg.format(segment=segment.name), 'success')
-                logmsg = '{segment} added by user {user}'
-                app.logger.info(logmsg.format(segment=segment,
+                logmsg = 'MonitoredSegment {segment} (ID: {segment_id}) added by user {user}'
+                app.logger.info(logmsg.format(segment=segment.name,
+                                              segment_id=segment.id,
                                               user=current_user.username))
             except IntegrityError as e:
                 msg = 'Error adding segment: {err}'
@@ -183,8 +186,9 @@ class SegmentView(FlaskView):
             segment.delete_instance()
             msg = 'Deleted monitored segment "{name}"'
             flash(msg.format(name=segment.name), 'success')
-            logmsg = '{segment} deleted by user {user}'
-            app.logger.info(logmsg.format(segment=segment,
+            logmsg = 'MonitoredSegment {segment} (ID: {segment_id}) deleted by user {user}'
+            app.logger.info(logmsg.format(segment=segment.name,
+                                          segment_id=segment.id,
                                           user=current_user.username))
             return redirect(url_for('SegmentView:index'))
         return render_template('monitoredsegment_delete.html',
@@ -216,8 +220,9 @@ class MonitorView(FlaskView):
                 monitor.save()
                 msg = 'Added event monitor "{monitor}" ({type})'
                 flash(msg.format(monitor=monitor.hostname, type=monitor.type), 'success')
-                logmsg = '{monitor} added by user {user}'
-                app.logger.info(logmsg.format(monitor=monitor,
+                logmsg = 'EventMonitor {monitor} (ID: {monitor_id}) added by user {user}'
+                app.logger.info(logmsg.format(monitor=monitor.name,
+                                              monitor_id=monitor.id,
                                               user=current_user.username))
             except IntegrityError as e:
                 msg = 'Error adding event monitor: {err}'
@@ -256,8 +261,9 @@ class MonitorView(FlaskView):
             monitor.delete_instance()
             msg = 'Deleted event monitor "{name}"'
             flash(msg.format(name=monitor.hostname), 'success')
-            logmsg = '{monitor} deleted by user {user}'
-            app.logger.info(logmsg.format(monitor=monitor,
+            logmsg = 'EventMonitor {monitor} (ID: {monitor_id}) deleted by user {user}'
+            app.logger.info(logmsg.format(monitor=monitor.name,
+                                          monitor_id=monitor.id,
                                           user=current_user.username))
             return redirect(url_for('MonitorView:index'))
         return render_template('eventmonitor_delete.html',
@@ -409,14 +415,14 @@ def index():
     # Segments for which we have not yet received probe events from
     # monitors will have None set for the 'latest_log_time' annotated field
     # due to the join. See Jinja template for specifics.
+    # Update 2018-08-21: .annotate() dropped in 3.x, query restructured
     monitored_segments = (MonitoredSegment
-                          .select()
+                          .select(MonitoredSegment,
+                                  fn.MAX(ReceivedProbeLog.recv_time)
+                                  .alias('latest_log_time'))
                           .join(ReceivedProbeLog, JOIN.LEFT_OUTER)
-                          .switch(MonitoredSegment)
-                          .order_by(MonitoredSegment.name)
-                          .annotate(ReceivedProbeLog,
-                                    fn.Max(ReceivedProbeLog.recv_time)
-                                    .alias('latest_log_time')))
+                          .group_by(MonitoredSegment)
+                          .order_by(MonitoredSegment.name))
     # Apply configured limit on number of monitored segments rendered on
     # index page. By default no limit is imposed to allow the user to see
     # information about all segments. As the number of configured segments

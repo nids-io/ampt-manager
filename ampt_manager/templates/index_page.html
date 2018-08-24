@@ -51,11 +51,12 @@
                   {% endif %}
                 </td>
                 {#
-                   The annotation for latest_log_time on the MonitoredSegment
-                   will have a value of None if no event logs have been
-                   received. This isn't handled by the default filter (we need
-                   to not render it as a timestamp in such cases), so work
-                   around it conditionally with the below test instead.
+                  The value for latest_log_time on the MonitoredSegment will
+                  be screwy and the ModelSelect will contain a value of None
+                  if no event logs have been received. This isn't handled by
+                  the default filter (it needs to not be rendered as a timestamp
+                  in such cases), so work around it conditionally with the
+                  below test instead. There's probably a better way to do this.
                 #}
                 {% if not segment.latest_log_time %}
                   <td>-</td>
