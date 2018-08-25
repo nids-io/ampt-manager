@@ -73,8 +73,9 @@ class GeneratorView(FlaskView):
             generator.save()
             msg = 'Updated probe generator "{name}"'
             flash(msg.format(name=generator.name), 'success')
-            logmsg = '{generator} modified by user {user}'
-            app.logger.info(logmsg.format(generator=generator,
+            logmsg = 'ProbeGenerator {generator} (ID: {generator_id}) modified by user {user}'
+            app.logger.info(logmsg.format(generator=generator.name,
+                                          generator_id=generator.id,
                                           addr=generator.address,
                                           port=generator.port,
                                           user=current_user.username))
@@ -170,8 +171,9 @@ class SegmentView(FlaskView):
             segment.save()
             msg = 'Updated monitored segment "{name}"'
             flash(msg.format(name=segment.name), 'success')
-            logmsg = '{segment} modified by user {user}'
-            app.logger.info(logmsg.format(segment=segment,
+            logmsg = 'MonitoredSegment {segment} (ID: {segment_id}) modified by user {user}'
+            app.logger.info(logmsg.format(segment=segment.name,
+                                          segment_id=segment.id,
                                           user=current_user.username))
             return redirect(url_for('SegmentView:get', id=id))
         return render_template('monitoredsegment_create_modify.html',
@@ -245,8 +247,9 @@ class MonitorView(FlaskView):
             monitor.save()
             msg = 'Updated event monitor "{name}"'
             flash(msg.format(name=monitor.hostname), 'success')
-            logmsg = '{monitor} modified by user {user}'
-            app.logger.info(logmsg.format(monitor=monitor,
+            logmsg = 'EventMonitor {monitor} (ID: {monitor_id}) modified by user {user}'
+            app.logger.info(logmsg.format(monitor=monitor.name,
+                                          monitor_id=monitor.id,
                                           user=current_user.username))
             return redirect(url_for('MonitorView:get', id=id))
         return render_template('eventmonitor_create_modify.html',
