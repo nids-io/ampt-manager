@@ -32,10 +32,12 @@ class ProbeRequest(object):
     def dispatch_probe_request(self):
         'Send probe request for monitored segment to generator'
         if not self.generator.active:
-            errmsg = ('aborting probe generation for {segment} '
-                      '- {generator} is inactive')
-            app.logger.warning(errmsg.format(segment=self.segment,
-                                             generator=self.generator))
+            errmsg = ('aborting probe generation for {segment} (ID: {segment_id} '
+                      '- {generator} (ID: {generator_id}) is inactive')
+            app.logger.warning(errmsg.format(segment=self.segment.name,
+                                             segment_id=self.generator.id,
+                                             generator=self.generator.name,
+                                             generator_id=self.generator.id))
             return
 
         # Define base parameters providing info needed by generator to
@@ -65,11 +67,11 @@ class ProbeRequest(object):
             r = requests.get(generator, params=params)
         except requests.exceptions.ConnectionError as e:
             errmsg = ('failure dispatching probe request to {generator} '
-                      '(id={generator_id}) for {segment} '
-                      '(id={segment_id}): {err}')
-            app.logger.error(errmsg.format(generator=self.generator,
+                      '(ID: {generator_id}) for {segment} '
+                      '(ID: {segment_id}): {err}')
+            app.logger.error(errmsg.format(generator=self.generator.name,
                                            generator_id=self.generator.id,
-                                           segment=self.segment,
+                                           segment=self.segment.name,
                                            segment_id=self.segment.id,
                                            err=e))
             return
@@ -77,12 +79,12 @@ class ProbeRequest(object):
         if r.status_code == 200:
             # Likely success, log it as such
             response_data = r.json()
-            msg = ('{generator} (id={generator_id}) accepted probe '
+            msg = ('ProbeGenerator {generator} (ID: {generator_id}) accepted probe '
                    'submission for {segment} (detail: {detail})')
-            app.logger.info(msg.format(generator=self.generator,
+            app.logger.info(msg.format(generator=self.generator.name,
                                        generator_id=self.generator.id,
                                        detail=response_data,
-                                       segment=self.segment))
+                                       segment=self.segment.name))
             self.log_probe_dispatch()
         else:
             # Likely HTTP error, raise exception for caller
