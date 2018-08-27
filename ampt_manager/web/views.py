@@ -223,7 +223,7 @@ class MonitorView(FlaskView):
                 msg = 'Added event monitor "{monitor}" ({type})'
                 flash(msg.format(monitor=monitor.hostname, type=monitor.type), 'success')
                 logmsg = 'EventMonitor {monitor} (ID: {monitor_id}) added by user {user}'
-                app.logger.info(logmsg.format(monitor=monitor.name,
+                app.logger.info(logmsg.format(monitor=monitor.hostname,
                                               monitor_id=monitor.id,
                                               user=current_user.username))
             except IntegrityError as e:
@@ -248,7 +248,7 @@ class MonitorView(FlaskView):
             msg = 'Updated event monitor "{name}"'
             flash(msg.format(name=monitor.hostname), 'success')
             logmsg = 'EventMonitor {monitor} (ID: {monitor_id}) modified by user {user}'
-            app.logger.info(logmsg.format(monitor=monitor.name,
+            app.logger.info(logmsg.format(monitor=monitor.hostname,
                                           monitor_id=monitor.id,
                                           user=current_user.username))
             return redirect(url_for('MonitorView:get', id=id))
@@ -265,7 +265,7 @@ class MonitorView(FlaskView):
             msg = 'Deleted event monitor "{name}"'
             flash(msg.format(name=monitor.hostname), 'success')
             logmsg = 'EventMonitor {monitor} (ID: {monitor_id}) deleted by user {user}'
-            app.logger.info(logmsg.format(monitor=monitor.name,
+            app.logger.info(logmsg.format(monitor=monitor.hostname,
                                           monitor_id=monitor.id,
                                           user=current_user.username))
             return redirect(url_for('MonitorView:index'))
