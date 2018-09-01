@@ -14,8 +14,9 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='ampt-manager',
-    version='0.3.3',
-    description='AMPT-manager, a web application that manages passive network device monitoring',
+    version='0.3.4',
+    description=('AMPT-manager, a web application that manages passive '
+                 'network device monitoring'),
     long_description=long_description,
     url='https://github.com/nids-io/ampt-manager',
     author='AMPT Project',

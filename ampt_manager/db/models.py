@@ -15,10 +15,9 @@ __all__ = ['User', 'ProbeGenerator', 'EventMonitor', 'MonitoredSegment',
 
 # List of supported EventMonitor types
 MONITOR_TYPES = [
-    ('suricata', 'Suricata sensor'),
+    ('bro', 'Bro sensor'),
     ('snort', 'Snort sensor'),
-    ('unknown', 'Unknown sensor type'),
-    ('other', 'Other sensor type'),
+    ('suricata', 'Suricata sensor'),
 ]
 # List of supported probe IP protocols
 PROBE_PROTOCOLS = [
