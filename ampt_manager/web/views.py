@@ -202,7 +202,8 @@ class MonitorView(FlaskView):
     decorators = [login_required]
 
     def index(self):
-        objects = EventMonitor.select().order_by(EventMonitor.hostname)
+        objects = EventMonitor.select().order_by(EventMonitor.hostname,
+                                                 EventMonitor.id)
         return render_template('eventmonitor_list.html', objects=objects)
 
     def get(self, id):
