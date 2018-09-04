@@ -8,7 +8,7 @@ from wtforms import SelectField, SubmitField, DateTimeField, validators
 from flask_wtf import FlaskForm
 
 from .. import settings
-from ..db.models import PROBE_PROTOCOLS, MONITOR_TYPES
+from ..db.models import PROBE_PROTOCOLS, LOG_PROBE_PROTOCOLS, MONITOR_TYPES
 from . import validators as ampt_validators
 from ..db.database import get_generator_choices
 
@@ -48,7 +48,7 @@ class AMPTObjectDeleteForm(FlaskForm):
     submitted = SubmitField('Delete Me')
 
 class ReceivedProbeLogForm(FlaskForm):
-    # Form functions as more of an API endpoint so no CSRF needed
+    # Form functions as a data submission endpoint so no CSRF needed
     class Meta:
         csrf = False
 
@@ -57,7 +57,7 @@ class ReceivedProbeLogForm(FlaskForm):
     dest_addr = StringField('Destination IP', [validators.InputRequired(), validators.IPAddress()], description='Destination IP in observed probe packet')
     src_port = IntegerField('Source Port', [validators.InputRequired(), validators.NumberRange(0, 65535)], description='Source port in observed probe packet')
     dest_port = IntegerField('Destination Port', [validators.InputRequired(), validators.NumberRange(0, 65535)], description='Destination port in observed probe packet')
-    protocol = SelectField('Protocol', [validators.InputRequired()], choices=PROBE_PROTOCOLS, description='IP protocol in observed probe packet')
+    protocol = SelectField('Protocol', [validators.InputRequired()], choices=LOG_PROBE_PROTOCOLS, description='IP protocol in observed probe packet')
     alert_time = DateTimeField('Alert Time', [validators.InputRequired()], format='%Y-%m-%dT%H:%M:%S', description='Timestamp of probe alert on remote sensor')
     hostname = StringField('Monitor Hostname', [validators.InputRequired()], description='Hostname of remote AMPT monitor')
     plugin_name = StringField('Monitor Plugin Name', [validators.InputRequired()], description='Name of plugin handling event on remote AMPT monitor')

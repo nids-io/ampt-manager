@@ -24,6 +24,8 @@ PROBE_PROTOCOLS = [
     ('tcp', 'TCP'),
     ('udp', 'UDP'),
 ]
+# Support logs from event monitors that don't include IP protocol
+LOG_PROBE_PROTOCOLS = PROBE_PROTOCOLS + [('unspecified', 'Unspecified')]
 
 ampt_db = SqliteDatabase(app.config['DATABASE'])
 database = FlaskDB(app, ampt_db)
@@ -137,7 +139,7 @@ class ReceivedProbeLog(BaseModel):
     dest_addr = CharField(help_text='Destination IP address from probe packet alert')
     src_port = IntegerField(help_text='Source port from probe packet alert')
     dest_port = IntegerField(help_text='Destination port from probe packet alert')
-    protocol = CharField(choices=PROBE_PROTOCOLS, help_text='IP protocol from probe packet alert')
+    protocol = CharField(choices=LOG_PROBE_PROTOCOLS, help_text='IP protocol from probe packet alert')
     hostname = CharField(help_text='Hostname of remote AMPT monitor')
     plugin_name = CharField(help_text='Name of plugin handling event on remote AMPT monitor')
     recv_time = DateTimeField(default=datetime.datetime.utcnow, help_text='Timestamp for event log receipt by manager')
@@ -146,7 +148,7 @@ class ReceivedProbeLog(BaseModel):
 
     def get_protocol_label(self):
         'Return display value for protocol choice field'
-        return dict(PROBE_PROTOCOLS)[self.protocol]
+        return dict(LOG_PROBE_PROTOCOLS)[self.protocol]
 
 class GeneratedProbeLog(BaseModel):
     probe_generator = ForeignKeyField(ProbeGenerator)
