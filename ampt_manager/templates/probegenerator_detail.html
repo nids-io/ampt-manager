@@ -50,9 +50,9 @@
             <strong>{{ object.monitoredsegment_set.count() }}</strong> segment(s).
             To delete the generator, each segment must be configured to use a different generator:
           </p>
-          <ul>
+          <ul class="list-unstyled">
             {% for segment in object.monitoredsegment_set %}
-              <li><a href="{{ url_for('SegmentView:get', id=segment.id) }}">{{ segment.name }}</a></li>
+              <li><span class="glyphicon glyphicon-transfer"></span> <a href="{{ url_for('SegmentView:get', id=segment.id) }}">{{ segment.name }}</a></li>
             {% endfor %}
           </ul>
         </div>
