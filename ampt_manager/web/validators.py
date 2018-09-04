@@ -29,15 +29,17 @@ class VerifiedHMAC():
     and the computed HMAC of this data is compared to the HMAC accompanying
     the client's request.
 
-    :param exclude_fields:
-        A list of field names on the form to exclude from HMAC verification.
-        Typically the HMAC digest field itself must be excluded.
-    :param message:
-        Error message to raise in case of a validation error. If not provided,
-        a default message is used.
-
     '''
     def __init__(self, exclude_fields=[], message=None):
+        '''
+        :param exclude_fields:
+            A list of field names on the form to exclude from HMAC verification.
+            Typically the HMAC digest field itself must be excluded.
+        :param message:
+            Error message to raise in case of a validation error. If not provided,
+            a default message is used.
+
+        '''
         self.exclude_fields = exclude_fields
         self.message = message
 

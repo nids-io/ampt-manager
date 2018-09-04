@@ -117,7 +117,7 @@ class SegmentView(FlaskView):
     @route('/create/', methods=['GET', 'POST'])
     def create(self):
         form = MonitoredSegmentCreateModifyForm()
-        # XXX bug
+        # XXX bug?
 	# For some reason data from form submission sets the generator and dest_port
 	# fields to a str type instead of int and leads to these types of exceptions
 	# in form.validate_on_submit():
@@ -155,7 +155,7 @@ class SegmentView(FlaskView):
     def edit(self, id):
         segment = get_object_or_404(MonitoredSegment, MonitoredSegment.id==id)
         form = MonitoredSegmentCreateModifyForm(obj=segment)
-        # XXX bug
+        # XXX bug?
 	# For some reason data from form submission sets the generator and dest_port
 	# fields to a str type instead of int and leads to this exception
 	# in form.validate_on_submit():
@@ -375,10 +375,10 @@ class ReceivedLogView(FlaskView):
             # Store new received event log instance
             try:
                 eventlog.save()
-                logmsg = 'probe log event accepted from {plugin} on {host} [{ip}] {monitor}'
-                app.logger.info(logmsg.format(host=form.hostname.data,
+                logmsg = 'probe log event accepted for monitor ID {monitor} from {plugin} on {host}[{ip}]'
+                app.logger.info(logmsg.format(monitor=matched_monitor,
+                                              host=form.hostname.data,
                                               ip=request.remote_addr,
-                                              monitor=matched_monitor,
                                               plugin=form.plugin_name.data))
                 response_msg = 'accepted event log (id={id})'.format(id=eventlog.id)
                 return jsonify({
