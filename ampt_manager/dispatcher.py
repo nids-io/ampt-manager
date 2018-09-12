@@ -15,6 +15,9 @@ from .web import app
 from .db.models import *
 
 
+from flask.logging import default_handler
+app.logger.removeHandler(default_handler)
+
 app.config.from_envvar('AMPT_MANAGER_SETTINGS')
 
 class ProbeRequest(object):
@@ -97,7 +100,6 @@ class ProbeRequest(object):
         pl.monitored_segment = self.segment
         pl.save()
 
-
 def send_probe_requests(args):
     '''
     Send probe requests for monitored segments to generator nodes
@@ -105,8 +107,7 @@ def send_probe_requests(args):
     '''
     # TODO: fix how this is duplicating the Flask app logging configuration from
     # the runserver module; need moar DRY
-    app_formatter = app.config['CONSOLE_LOG_FORMATTER']
-    file_formatter = app.config['FILE_LOG_FORMATTER']
+    app_formatter = app.config['LOG_FORMATTER']
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
     stream_handler.setFormatter(app_formatter)
@@ -116,12 +117,13 @@ def send_probe_requests(args):
     if app.config.get('LOGFILE'):
         file_handler = logging.FileHandler(app.config['LOGFILE'])
         file_handler.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
-        file_handler.setFormatter(file_formatter)
+        file_handler.setFormatter(app_formatter)
         app.logger.addHandler(file_handler)
         app.logger.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
 
     # Dispatch
-    active_segments = MonitoredSegment.select().where(MonitoredSegment.active == True)
+    active_segments = (MonitoredSegment.select()
+                       .where(MonitoredSegment.active == True))
     if active_segments:
         msg = 'preparing to dispatch probe requests for {cnt} monitored segments'
         app.logger.info(msg.format(cnt=active_segments.count()))
@@ -130,6 +132,6 @@ def send_probe_requests(args):
             pr = ProbeRequest(segment)
             pr.dispatch_probe_request()
     else:
-        msg = 'there are no active monitored segments!'
+        msg = 'there are no active monitored segments'
         app.logger.error(msg)
 

@@ -31,6 +31,12 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
         self.application = app
         super(StandaloneApplication, self).__init__()
 
+        # XXX doesn't quite work as desired - it gets us the new AMPT handler
+        # log we do want, as well as the old Gunicorn handler log we don't want.
+        gunicorn_err_logger = logging.getLogger('gunicorn.error')
+        gunicorn_err_logger.handlers = app.logger.handlers
+        gunicorn_err_logger.propagate = False
+
     def load_config(self):
         config = dict([(key, value) for key, value in iteritems(self.options)
                        if key in self.cfg.settings and value is not None])
@@ -44,10 +50,13 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 def run_server(args):
     'Load app in a standalone Gunicorn container'
 
+    # XXX
+    from flask.logging import default_handler
+    app.logger.removeHandler(default_handler)
+
     # Flask has default stream logging configuration in debug mode, so set
     # log parameters here only for production mode
-    app_formatter = app.config['CONSOLE_LOG_FORMATTER']
-    file_formatter = app.config['FILE_LOG_FORMATTER']
+    app_formatter = app.config['LOG_FORMATTER']
     if not app.debug:
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
@@ -58,7 +67,7 @@ def run_server(args):
     if app.config.get('LOGFILE'):
         file_handler = logging.FileHandler(app.config['LOGFILE'])
         file_handler.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
-        file_handler.setFormatter(file_formatter)
+        file_handler.setFormatter(app_formatter)
         app.logger.addHandler(file_handler)
         app.logger.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
 

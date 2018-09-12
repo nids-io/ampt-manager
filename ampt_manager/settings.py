@@ -9,9 +9,7 @@ import logging
 
 DEBUG = False
 
-CONSOLE_LOG_FORMATTER = logging.Formatter('%(asctime)s: [%(levelname)s] %(message)s')
-FILE_LOG_FORMATTER = logging.Formatter('%(asctime)s: [%(levelname)s] %(module)s - %(message)s')
-DEBUG_LOG_FORMATTER = logging.Formatter('[%(funcName)s-%(levelname)s] %(asctime)s: %(message)s')
+LOG_FORMATTER = logging.Formatter('%(asctime)s [%(levelname)s] %(module)s - %(message)s')
 DEFAULT_LOG_LEVEL = 'warning'
 PAGINATION_CNT_LOGS = 50
 # Number of MonitoredSegment items to show on app index page. 0 means unlimited.

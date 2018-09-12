@@ -9,6 +9,9 @@ from .web import app
 from .db.models import MonitoredSegment, ReceivedProbeLog
 
 
+from flask.logging import default_handler
+app.logger.removeHandler(default_handler)
+
 def verify_probe_events(args):
     '''
     Verify receipt of probe logs for monitored segments
@@ -20,10 +23,9 @@ def verify_probe_events(args):
     '''
     retval = 0
 
-    # TODO: fix how this is duplicating the Flask app logging configuration from
+    # XXX: fix how this is duplicating the Flask app logging configuration from
     # the runserver module; need moar DRY
-    app_formatter = app.config['CONSOLE_LOG_FORMATTER']
-    file_formatter = app.config['FILE_LOG_FORMATTER']
+    app_formatter = app.config['LOG_FORMATTER']
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
     stream_handler.setFormatter(app_formatter)
@@ -33,7 +35,7 @@ def verify_probe_events(args):
     if app.config.get('LOGFILE'):
         file_handler = logging.FileHandler(app.config['LOGFILE'])
         file_handler.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
-        file_handler.setFormatter(file_formatter)
+        file_handler.setFormatter(app_formatter)
         app.logger.addHandler(file_handler)
         app.logger.setLevel((args.loglevel or app.config.get('LOGLEVEL')).upper())
 
@@ -41,14 +43,14 @@ def verify_probe_events(args):
                                        .where(MonitoredSegment.active == True)
                                        .order_by(MonitoredSegment.name))
     active_segments_count = active_segments.count()
-    msg = 'Active segments: {segments}'
+    msg = 'active segments: {segments}'
     app.logger.debug(msg.format(segments=', '.join(['id={id}/{name}'
                      .format(id=s.id, name=s.name) for s in active_segments])))
     if not active_segments_count:
-        app.logger.warning('No active monitored segments are configured')
+        app.logger.warning('no active monitored segments are configured')
         return 1
     else:
-        msg = ('Verifying {count} monitored {s} for alerts '
+        msg = ('verifying {count} monitored {s} for alerts '
                'over previous {period} {m}')
         app.logger.info(msg.format(count=active_segments_count,
                                    period=args.period,
@@ -63,32 +65,31 @@ def verify_probe_events(args):
     # that is older than the requested period aren't returned by this query.
     # AMPT admins should adjust (increase) requested periods accordingly.
     #
-    # TODO: should attempt to refactor and collect all data in one query
+    # XXX: should attempt to refactor and collect all data in one query
     # rather than querying for each segment individually.
     #
     for segment in active_segments:
         start_time = (datetime.datetime.utcnow()
                       - datetime.timedelta(minutes=args.period))
         end_time = datetime.datetime.utcnow()
-        app.logger.debug('Alert time period between {start} - {end}'
+        app.logger.debug('alert time period between {start} - {end}'
                          .format(start=start_time, end=end_time))
-        app.logger.debug('Verifying segment id={id}/{name}'
+        app.logger.debug('verifying segment id={id}/{name}'
                          .format(id=segment.id, name=segment.name))
         recent_events = (segment.receivedprobelog_set
                          .where(ReceivedProbeLog.alert_time
                                 .between(datetime.datetime.utcnow() - datetime.timedelta(minutes=args.period),
                                          datetime.datetime.utcnow())))
         if not recent_events:
-            msg = ('No probe logs received for {segment} within previous '
-                   '{m} minute period')
-            app.logger.warning(msg.format(segment=segment, m=args.period))
+            msg = ('no probe logs received for {segment} segment '
+                   'within previous {m} minute period')
+            app.logger.warning(msg.format(segment=segment.name,
+                                          m=args.period))
             retval = 1
         else:
-            msg = ('{count} probe logs received for {segment} within '
+            msg = ('{count} probe logs received for {segment} segment within '
                    'previous {period} minute period')
             app.logger.info(msg.format(count=recent_events.count(),
-                                       segment=segment,
+                                       segment=segment.name,
                                        period=args.period))
-
     return retval
-

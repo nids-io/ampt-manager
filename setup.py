@@ -14,7 +14,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='ampt-manager',
-    version='0.4.1',
+    version='0.4.2',
     description=('AMPT-manager, a web application that manages passive '
                  'network device monitoring'),
     long_description=long_description,
