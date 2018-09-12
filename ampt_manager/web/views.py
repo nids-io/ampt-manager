@@ -15,7 +15,7 @@ from flask_login import current_user
 from flask_classy import FlaskView, route
 
 from . import app
-from .. import __version__ as ampt_mgr_version
+from .. import get_version
 from .forms import *
 from .. import settings
 from ..db.models import *
@@ -466,7 +466,7 @@ def index():
                            total_probe_generators=total_probe_generators,
                            event_monitors=event_monitors,
                            total_event_monitors=total_event_monitors,
-                           ampt_mgr_version=ampt_mgr_version,
+                           ampt_mgr_version=get_version(),
                           )
 
 @app.route('/login/', methods=['GET', 'POST'])

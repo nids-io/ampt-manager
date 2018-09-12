@@ -18,7 +18,7 @@ from flask import __version__ as flask_version
 
 from . import app
 from .. import settings
-from .. import __version__ as ampt_mgr_version
+from .. import get_version
 
 
 MAX_WORKERS = settings.gunicorn_workers_max
@@ -98,7 +98,7 @@ def run_server(args):
     crypto_msg = ('configuring server for TLS using %s and cipher set %s (%s)')
     ssl_version = ssl.get_protocol_name(sa.cfg.ssl_options.get('ssl_version'))
     ciphers = sa.cfg.ssl_options.get('ciphers')
-    app.logger.info('starting AMPT Manager %s', ampt_mgr_version)
+    app.logger.info('starting %s', get_version())
     app.logger.debug(ver_dep_msg, py_version, flask_version)
     app.logger.info(crypto_msg, ssl_version, ciphers, ssl.OPENSSL_VERSION)
 

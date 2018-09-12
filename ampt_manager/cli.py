@@ -41,6 +41,9 @@ def valid_configfile(s):
 def main():
     main_description = 'Manager server for the AMPT passive tools monitor'
     parser = argparse.ArgumentParser(description=main_description)
+    parser.add_argument('-V', '--version', action='store_true',
+                        help='display version and exit')
+
     subparsers = parser.add_subparsers()
 
     init_description = 'Initialize new AMPT manager configuration'
@@ -102,6 +105,11 @@ def main():
     parser_verify.set_defaults(func=_verify_probe_events)
 
     args = parser.parse_args()
+
+    # Handle special case of version output.
+    if args.version:
+        from . import get_version
+        parser.exit(status=0, message=get_version() + '\n')
 
     # Error handling for no subcommand called.
     if not hasattr(args, 'func'):
