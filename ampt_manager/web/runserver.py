@@ -13,7 +13,7 @@ import logging
 import multiprocessing
 
 import gunicorn.app.base
-from gunicorn.six import iteritems
+from six import iteritems
 from flask import __version__ as flask_version
 
 from . import app
