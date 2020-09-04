@@ -14,6 +14,7 @@ from .. import settings
 MODEL_LIST = [ProbeGenerator, EventMonitor, MonitoredSegment, ReceivedProbeLog,
               GeneratedProbeLog, User]
 
+
 def get_generator_choices():
     '''
     Produce list of tuples of Probe Generator objects suitable for use as
@@ -24,6 +25,7 @@ def get_generator_choices():
                           .order_by(ProbeGenerator.name)
                           .tuples())
 
+
 def get_random_admin_pass(n):
     '''
     Return random alphanumeric string of length `n` for default admin
@@ -32,6 +34,7 @@ def get_random_admin_pass(n):
     '''
     return ''.join(random.SystemRandom().choice(
         string.ascii_letters + string.digits) for _ in range(n))
+
 
 def initialize_database(args, admin_user, admin_pw):
     '''

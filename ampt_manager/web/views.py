@@ -2,7 +2,6 @@
 AMPT Manager application views
 
 '''
-
 import datetime
 
 from peewee import fn, JOIN, IntegrityError
@@ -18,6 +17,7 @@ from . import app
 from .. import get_version
 from .forms import *
 from .. import settings
+from ..db.database import get_generator_choices
 from ..db.models import *
 from .crypt import bcrypt
 from .validators import persist_counter
@@ -117,12 +117,16 @@ class SegmentView(FlaskView):
     @route('/create/', methods=['GET', 'POST'])
     def create(self):
         form = MonitoredSegmentCreateModifyForm()
+        # https://wtforms.readthedocs.io/en/2.3.x/fields/#wtforms.fields.SelectField
+        form.generator.choices = get_generator_choices()
+
         # XXX bug?
 	# For some reason data from form submission sets the generator and dest_port
 	# fields to a str type instead of int and leads to these types of exceptions
 	# in form.validate_on_submit():
         #   TypeError: unorderable types: str() < int()
         #   TypeError: '<' not supported between instances of 'str' and 'int'
+        #   TypeError: must be real number, not str
 	# So we make them an int explicitly:
         if request.method == 'POST':
             form.generator.data = int(form.generator.data)
@@ -155,6 +159,9 @@ class SegmentView(FlaskView):
     def edit(self, id):
         segment = get_object_or_404(MonitoredSegment, MonitoredSegment.id==id)
         form = MonitoredSegmentCreateModifyForm(obj=segment)
+        # https://wtforms.readthedocs.io/en/2.3.x/fields/#wtforms.fields.SelectField
+        form.generator.choices = get_generator_choices()
+
         # XXX bug?
 	# For some reason data from form submission sets the generator and dest_port
 	# fields to a str type instead of int and leads to this exception

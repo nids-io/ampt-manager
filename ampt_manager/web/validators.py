@@ -2,13 +2,13 @@
 AMPT Manager form custom validators
 
 '''
-import os
 import copy
 import hmac
 import json
+import os
 import os.path
-from shutil import chown
 from datetime import date, datetime
+from shutil import chown
 
 from wtforms.validators import ValidationError
 
@@ -43,6 +43,7 @@ class VerifiedHMAC():
         self.exclude_fields = exclude_fields
         self.message = message
 
+
     def __call__(self, form, field):
         req_digest = field.data
         monitor_id = int(form['monitor'].data)
@@ -73,6 +74,7 @@ class VerifiedHMAC():
             raise ValidationError(self.message)
         app.logger.debug('received event log HMAC verified successfully')
 
+
 class VerifiedCounter():
     '''Verify the replay counter on AMPT Monitor event log messages.
 
@@ -93,6 +95,7 @@ class VerifiedCounter():
     def __init__(self, message=None):
         self.message = message
 
+
     def __call__(self, form, field):
         'Validate timestamp counter on request'
 
@@ -109,6 +112,7 @@ class VerifiedCounter():
             app.logger.debug('received event log replay counter verified '
                              'successfully')
 
+
 def persist_counter(db_path, ctr=settings.counter_db_init_val):
     '''Store value into counter file.
 
@@ -124,6 +128,7 @@ def persist_counter(db_path, ctr=settings.counter_db_init_val):
             app.logger.debug('initialized counter database with base '
                              'value of %d', settings.counter_db_init_val)
 
+
 def json_serial(obj):
     '''JSON serializer for objects not serializable by default.
 
@@ -134,4 +139,5 @@ def json_serial(obj):
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
+
 
