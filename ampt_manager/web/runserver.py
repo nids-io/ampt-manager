@@ -85,7 +85,7 @@ def run_server(args):
         'proc_name': 'ampt-manager',
         'certfile': app.config['SERVER_CERTIFICATE'],
         'keyfile': app.config['SERVER_PRIVATE_KEY'],
-        'ssl_version': ssl.PROTOCOL_TLSv1_2,
+        'ssl_version': ssl.PROTOCOL_TLS,
         'accesslog': app.config.get('ACCESS_LOGFILE') or '-',
         'errorlog': '-',
         'loglevel': args.loglevel or app.config['LOGLEVEL'],
@@ -95,11 +95,11 @@ def run_server(args):
 
     ver_dep_msg = ('running on Python %s using Flask %s')
     py_version = '.'.join([str(x) for x in sys.version_info[:3]])
-    crypto_msg = ('configuring server for TLS using %s and cipher set %s (%s)')
+    crypto_msg = ('configuring server for TLS using %s (%s)')
     ssl_version = ssl.get_protocol_name(sa.cfg.ssl_options.get('ssl_version'))
     ciphers = sa.cfg.ssl_options.get('ciphers')
     app.logger.info('starting %s', get_version())
     app.logger.debug(ver_dep_msg, py_version, flask_version)
-    app.logger.info(crypto_msg, ssl_version, ciphers, ssl.OPENSSL_VERSION)
+    app.logger.info(crypto_msg, ssl_version, ssl.OPENSSL_VERSION)
 
     sa.run()
